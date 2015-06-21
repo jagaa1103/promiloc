@@ -4,9 +4,9 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
+var app = angular.module('promiloc', ['ionic', 'firebase']);
 
-.run(function($ionicPlatform) {
+app.run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -20,15 +20,30 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
-
+  .state('start', {
+    url: "/start",
+    templateUrl: "templates/start.html",
+    controller: 'startCtrl'  
+  })
   .state('app', {
     url: "/app",
     abstract: true,
     templateUrl: "templates/menu.html",
-    controller: 'AppCtrl'
+    controller: 'MenuCtrl'
   })
+
+  .state('app.main', {
+    url: "/main",
+    views: {
+      'menuContent': {
+        templateUrl: "templates/main.html",
+        controller: "mainCtrl"
+      }
+    }
+  })
+
 
   .state('app.search', {
     url: "/search",
@@ -67,5 +82,5 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/start');
 });

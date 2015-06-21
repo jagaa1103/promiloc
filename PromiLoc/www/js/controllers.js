@@ -1,14 +1,63 @@
-angular.module('starter.controllers', [])
+app.controller('MenuCtrl', function($scope, $ionicModal, $timeout) {
+  var markers = [];
+  $scope.addMemo = function(){
+    $scope.addMemoModal.show();
+    mapInit();
+  }
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+  $scope.closeAddMemo = function(){
+    $scope.addMemoModal.hide();
+  }
+
+  $scope.saveClicked = function(data){
+    var memoData = {
+      receiver_id: data.receiver_id,
+      position: {
+        lat: $scope.position.lat,
+        lon: $scope.position.lon
+      },
+      msg: data.msg
+    };
+    console.log(memoData);
+  }
+  // ============= Google Map ==================
+  function mapInit() {
+        var myLatlng = new google.maps.LatLng(43.07493,-89.381388);
+        
+        var mapOptions = {
+          center: myLatlng,
+          zoom: 16,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        
+        google.maps.event.addListener(map, 'mousedown', function(e) {
+          placeMarker(map, e.latLng);
+        });
+  }
   
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-  
+  function placeMarker(map, position) { 
+    clearMarkers();
+    $scope.position = {
+      lat : position.A,
+      lon : position.F
+    };
+    
+    var marker = new google.maps.Marker({
+      position: position,
+      map: map
+    });
+    markers.push(marker);
+    console.log(position);
+  }
+  function clearMarkers(){
+    for(var i=0; i<markers.length; i++){
+      markers[i].setMap(null);
+    }
+  }
+
+  // ============= ========== ==================
+
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -16,17 +65,23 @@ angular.module('starter.controllers', [])
   $ionicModal.fromTemplateUrl('templates/login.html', {
     scope: $scope
   }).then(function(modal) {
-    $scope.modal = modal;
+    $scope.loginModal = modal;
+  });
+
+  $ionicModal.fromTemplateUrl('templates/addMemo.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.addMemoModal = modal;
   });
 
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
-    $scope.modal.hide();
+    $scope.loginModal.hide();
   };
 
   // Open the login modal
   $scope.login = function() {
-    $scope.modal.show();
+    $scope.loginModal.show();
   };
 
   // Perform the login action when the user submits the login form
@@ -41,7 +96,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
+app.controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
     { title: 'Reggae', id: 1 },
     { title: 'Chill', id: 2 },
@@ -52,5 +107,5 @@ angular.module('starter.controllers', [])
   ];
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+app.controller('PlaylistCtrl', function($scope, $stateParams) {
 });
